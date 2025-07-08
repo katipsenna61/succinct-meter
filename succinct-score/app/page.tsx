@@ -1,103 +1,118 @@
-import Image from "next/image";
+'use client'
+
+import { useState } from 'react'
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { motion } from "framer-motion"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [stars, setStars] = useState(0)
+  const [proofs, setProofs] = useState(0)
+  const [isStage2_5, setIsStage2_5] = useState(false)
+  const [discordRoles, setDiscordRoles] = useState<string[]>([])
+  const [score, setScore] = useState<number | null>(null)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const rolePoints: Record<string, number> = {
+    luv: 6,
+    l2: 5,
+    l3: 5,
+    dope: 4
+  }
+
+  const toggleRole = (role: string) => {
+    setDiscordRoles(prev =>
+      prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]
+    )
+  }
+
+  const calculateScore = () => {
+    let total = 0
+
+    // Stars: max 20
+    total += Math.min((stars / 20000) * 20, 20)
+
+    // Proofs: max 30
+    total += Math.min((proofs / 50) * 30, 30)
+
+    // Stage 2.5: 10 puan
+    if (isStage2_5) total += 10
+
+    // Discord roller: max 20
+    const roleSum = discordRoles.reduce((sum, r) => sum + (rolePoints[r] || 0), 0)
+    total += Math.min(roleSum, 20)
+
+    setScore(Math.round(total))
+  }
+
+  const getTitle = () => {
+    if (score === null) return ""
+    if (score >= 90) return "🧠 Truth Architect"
+    if (score >= 70) return "🧪 OG Prover"
+    if (score >= 50) return "🧭 Proof Explorer"
+    if (score >= 31) return "🌫️ Proof Tourist"
+    return "👻 Ghost Prover"
+  }
+
+  return (
+    <main className="min-h-screen bg-black text-white flex flex-col items-center p-8 gap-8">
+      <h1 className="text-4xl font-bold text-center">Ne Kadar Succinct’sin?</h1>
+
+      <div className="grid gap-4 w-full max-w-md">
+        <div>
+          <Label htmlFor="stars">⭐ Star sayısı</Label>
+          <Input id="stars" type="number" value={stars} onChange={e => setStars(+e.target.value)} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <div>
+          <Label htmlFor="proofs">🧾 Proof sayısı</Label>
+          <Input id="proofs" type="number" value={proofs} onChange={e => setProofs(+e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Checkbox id="stage2_5" checked={isStage2_5} onCheckedChange={val => setIsStage2_5(!!val)} />
+          <Label htmlFor="stage2_5">Stage 2.5'e seçildim</Label>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { id: "luv", label: "💖 LUV" },
+            { id: "l2", label: "⚡ Level 2" },
+            { id: "l3", label: "🧪 Level 3" },
+            { id: "dope", label: "🔥 DOPE / ALL IN" },
+          ].map(({ id, label }) => (
+            <div key={id} className="flex items-center gap-2">
+              <Checkbox
+                id={id}
+                checked={discordRoles.includes(id)}
+                onCheckedChange={() => toggleRole(id)}
+              />
+              <Label htmlFor={id}>{label}</Label>
+            </div>
+          ))}
+        </div>
+
+        <Button onClick={calculateScore}>Skorumu Hesapla</Button>
+      </div>
+
+      {score !== null && (
+        <motion.div
+          className="text-center mt-8"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+          <p className="text-2xl mb-2">Succinct Skorun:</p>
+          <motion.div
+            className="text-5xl font-bold text-green-400"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+          >
+            {score} / 100
+          </motion.div>
+          <p className="text-2xl mt-4">{getTitle()}</p>
+        </motion.div>
+      )}
+    </main>
+  )
 }
