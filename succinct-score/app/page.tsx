@@ -5,26 +5,26 @@ import { motion } from "framer-motion";
 
 const questions = [
   {
-    q: "Succinct ne zaman kuruldu?",
-    options: ["2020", "2022", "2023", "2024"],
-    answer: "2023"
+    q: "When was Succinct founded?",
+    options: ["2019", "2020", "2021", "2022"],
+    answer: "2022"
   },
   {
-    q: "Stage 1 kaç hafta sürdü?",
-    options: ["2", "3", "4", "5"],
-    answer: "4"
+    q: "How many weeks did Stage 1 last?",
+    options: ["17", "18", "19", "20"],
+    answer: "20"
   },
   {
-    q: "ALL IN SUCCINCT rolüne kaç kişi sahip?",
-    options: ["10", "15", "20", "25"],
+    q: "How many people have the ALL IN SUCCINCT role?",
+    options: ["12", "13", "14", "15"],
     answer: "15"
   },
   {
-    q: "Who published a graph theory paper at MIT PRIMES in 2015 at age 17?",
+    q: "Who published a graph theory paper at MIT PRIMES in 2015 at the age of 17?",
     options: ["Nair Advaith", "John Guibas", "Uma Roy", "crashout"],
     answer: "Uma Roy"
   }
-]
+];
 
 export default function Home() {
   const [stars, setStars] = useState(0)
@@ -155,6 +155,17 @@ export default function Home() {
           </h1>
           <p className="text-sm text-gray-500 mt-1">Your Succinct Score</p>
           <p className="mt-2 text-xl">{getTitle(totalScore)}</p>
+
+          <a
+            href={`https://twitter.com/intent/tweet?text=I just scored ${totalScore} points on the Succinct Score App! ${getTitle(
+              totalScore
+            )} 💥 Try it yourself at https://your-app-url.vercel.app`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors text-sm font-medium"
+          >
+            Share on X 🐦
+          </a>
         </motion.div>
       )}
     </div>
