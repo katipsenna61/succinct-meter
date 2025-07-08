@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: #f9fafb;
+  font-family: sans-serif;
+}
+
+input.input {
+  @apply border rounded-md px-3 py-2 w-full mt-1;
+}
