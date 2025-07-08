@@ -1,131 +1,130 @@
-'use client'
-
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-
-const TOTAL_STARS = 250_000_000
-const TOTAL_PROOFS = 77_000
-
-const roles = [
-  { name: 'Proof Verified' },
-  { name: 'PROVED UR LUV' },
-  { name: 'Level 2 (L2)' },
-  { name: 'Level 3 (L3)' },
-  { name: 'DOPE / ALL IN SUCCINCT' }
-]
+import { useState } from "react"
+import { motion } from "framer-motion"
 
 const questions = [
   {
-    question: 'Who published a paper on graph theory at 17?',
-    options: ['Uma Roy', 'Vitalik Buterin', 'Maryam Mirzakhani', 'Dan Boneh'],
-    answer: 'Uma Roy'
+    q: "Succinct ne zaman kuruldu?",
+    options: ["2020", "2022", "2023", "2024"],
+    answer: "2023"
   },
   {
-    question: 'Which layer does Succinct focus on?',
-    options: ['L1', 'L2', 'L3', 'Proof Layer'],
-    answer: 'Proof Layer'
+    q: "Stage 1 kaç hafta sürdü?",
+    options: ["2", "3", "4", "5"],
+    answer: "4"
   },
   {
-    question: 'What’s the name of Succinct’s proving system?',
-    options: ['HotShot', 'Zebra', 'Boundless', 'Nova'],
-    answer: 'Boundless'
+    q: "ALL IN SUCCINCT rolüne kaç kişi sahip?",
+    options: ["10", "15", "20", "25"],
+    answer: "15"
   },
   {
-    question: 'What kind of contests did Succinct run?',
-    options: ['Design', 'Proof', 'Staking', 'Governance'],
-    answer: 'Proof'
+    q: "Who published a graph theory paper at MIT PRIMES in 2015 at age 17?",
+    options: ["Nair Advaith", "John Guibas", "Uma Roy", "crashout"],
+    answer: "Uma Roy"
   }
 ]
 
 export default function Home() {
   const [stars, setStars] = useState(0)
   const [proofs, setProofs] = useState(0)
-  const [stage25, setStage25] = useState(false)
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
-  const [answers, setAnswers] = useState<string[]>(Array(4).fill(''))
+  const [stage2_5, setStage2_5] = useState(false)
+  const [roles, setRoles] = useState<string[]>([])
+  const [answers, setAnswers] = useState<string[]>([])
   const [totalScore, setTotalScore] = useState<number | null>(null)
 
   const calculateScore = () => {
-    const starScore = Math.min((stars / TOTAL_STARS) * 20, 20)
-    const proofScore = Math.min((proofs / TOTAL_PROOFS) * 40, 40)
-    const stage25Score = stage25 ? 10 : 0
-
-    const roleCount = selectedRoles.length
-    const maxRoleScore = Math.min(roleCount * 2, 10) // 5 role → 2 puan → max 10
-
-    const quizScore = questions.reduce((sum, q, i) => {
-      return sum + (answers[i] === q.answer ? 5 : 0)
-    }, 0)
-
-    setTotalScore(Math.round(starScore + proofScore + stage25Score + maxRoleScore + quizScore))
+    let score = 0
+    score += Math.min((stars / 250_000_000) * 20, 20)
+    score += Math.min((proofs / 77_000) * 40, 40)
+    if (stage2_5) score += 10
+    score += Math.min(roles.length * 2.5, 10)
+    score += answers.filter((a, i) => a === questions[i].answer).length * 5
+    setTotalScore(Math.round(score))
   }
 
-  const getTitle = (score: number | null) => {
-    if (score === null) return ''
-    if (score >= 90) return 'Truth Architect'
-    if (score >= 70) return 'OG Prover'
-    if (score >= 50) return 'Proof Explorer'
-    if (score >= 31) return 'Proof Tourist'
-    return 'Ghost Prover'
+  const getTitle = (score: number) => {
+    if (score >= 90) return "ALL IN SUCCINCT 🥇"
+    if (score >= 70) return "Seasoned Prover 🧠"
+    if (score >= 50) return "Proof Enjoyer 🙃"
+    if (score >= 30) return "Testnet Tourist 🧪"
+    return "Discord Lurker 👀"
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Succinct Contribution Score</h1>
-
-      <div>
-        <label>⭐ Stage 1 - Star count:</label>
-        <input type="number" className="input" value={stars} onChange={e => setStars(Number(e.target.value))} />
-      </div>
-
-      <div>
-        <label>🧾 Stage 2 - Proof count:</label>
-        <input type="number" className="input" value={proofs} onChange={e => setProofs(Number(e.target.value))} />
-      </div>
-
-      <div>
-        <label>
-          <input type="checkbox" checked={stage25} onChange={e => setStage25(e.target.checked)} />
-          ✅ Selected for Stage 2.5
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input
+          type="number"
+          placeholder="Star sayısı"
+          className="border p-2 rounded w-full"
+          value={stars}
+          onChange={(e) => setStars(Number(e.target.value))}
+        />
+        <input
+          type="number"
+          placeholder="Proof sayısı"
+          className="border p-2 rounded w-full"
+          value={proofs}
+          onChange={(e) => setProofs(Number(e.target.value))}
+        />
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={stage2_5}
+            onChange={() => setStage2_5(!stage2_5)}
+            className="w-5 h-5 border rounded appearance-none checked:bg-green-400 checked:border-green-600"
+          />
+          <span>Stage 2.5'e seçildim ✅</span>
         </label>
-      </div>
 
-      <div>
-        <p className="mb-2">🎖️ Discord Roles:</p>
-        <div className="flex flex-wrap gap-2">
-          {roles.map(role => (
-            <label key={role.name} className={`border rounded-xl px-3 py-1 cursor-pointer ${selectedRoles.includes(role.name) ? 'bg-green-200' : 'bg-gray-100'}`}>
+        <div>
+          <p className="font-medium mb-1">Discord Rollerini Seç:</p>
+          {[
+            "PROVED UR LUV",
+            "Level 2",
+            "Level 3",
+            "DOPE",
+            "ALL IN SUCCINCT"
+          ].map((role) => (
+            <label key={role} className="block">
               <input
                 type="checkbox"
                 className="mr-2"
-                checked={selectedRoles.includes(role.name)}
+                checked={roles.includes(role)}
                 onChange={() =>
-                  setSelectedRoles(prev =>
-                    prev.includes(role.name) ? prev.filter(r => r !== role.name) : [...prev, role.name]
+                  setRoles((prev) =>
+                    prev.includes(role)
+                      ? prev.filter((r) => r !== role)
+                      : [...prev, role]
                   )
                 }
               />
-              ✅ {role.name}
+              <span className="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-3 py-1 rounded-full">
+                {role}
+              </span>
             </label>
           ))}
         </div>
       </div>
 
-      <div>
-        <p className="font-semibold mb-2">🧠 Succinct Quiz</p>
+      <div className="space-y-4">
         {questions.map((q, idx) => (
-          <div key={idx} className="mb-4">
-            <p>{q.question}</p>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {q.options.map(option => (
+          <div key={idx} className="p-4 bg-gray-100 rounded-xl">
+            <p className="font-semibold mb-2">{q.q}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {q.options.map((option) => (
                 <button
                   key={option}
                   onClick={() => {
-                    const newAnswers = [...answers]
-                    newAnswers[idx] = option
-                    setAnswers(newAnswers)
+                    const updated = [...answers]
+                    updated[idx] = option
+                    setAnswers(updated)
                   }}
-                  className={`px-3 py-1 rounded-xl border ${answers[idx] === option ? 'bg-blue-300' : 'bg-gray-100'}`}
+                  className={`px-3 py-1 rounded-xl border ${
+                    answers[idx] === option
+                      ? "bg-blue-300 border-blue-500"
+                      : "bg-gray-100 border-gray-300"
+                  }`}
                 >
                   {option}
                 </button>
@@ -135,21 +134,24 @@ export default function Home() {
         ))}
       </div>
 
-      <button onClick={calculateScore} className="bg-black text-white px-4 py-2 rounded-xl">
+      <button
+        onClick={calculateScore}
+        className="bg-black text-white px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-transform duration-200"
+      >
         Calculate Score
       </button>
 
       {totalScore !== null && (
         <motion.div
-          className="mt-6 text-center"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
+          className="text-center mt-6"
         >
-          <p className="text-lg">Your Succinct Score:</p>
-          <motion.h1 className="text-5xl font-bold text-green-600" animate={{ scale: [1, 1.3, 1] }}>
+          <h1 className="text-5xl font-bold text-green-600">
             {totalScore}
-          </motion.h1>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Your Succinct Score</p>
           <p className="mt-2 text-xl">{getTitle(totalScore)}</p>
         </motion.div>
       )}
